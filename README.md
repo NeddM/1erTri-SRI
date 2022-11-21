@@ -4,6 +4,32 @@
 
 Realizaremos la instalación de un servidor web Apache. Para ello, usaremos dos dominios meidante el archivo hosts: _centro.intranet_ y _departamentos.centro.intranet_. El primero servirá el contenido meidante Wordpress y el segundo una aplicación en Python.
 
+Para empezar, vamos a actualizar nuestro sistema operativo Ubuntu, para ello, nos dirigimos a la terminal y escribimos:
+"""bash
+sudo apt update
+"""
+
+Luego, procederemos a instalar apache2:
+
+"""bash
+sudo apt install apache2
+"""
+
+##### Configuramos el firewall para permitir el tráfico web
+
+Lo siguiente que tenemos que hacer es ajustar el firewall, para permitir el tráfico web. Esto permite el paso de los protocolos **HTTP** y **HTTPS**.
+Para ello, escribimos:
+
+"""bash
+sudo ufw app list
+"""
+
+A nosotros nos interesa instalar el `Apache Full`. Por lo tanto, escribimos:
+
+"""bash
+sudo ufw app info "Apache Full"
+"""
+
 ## Activar los módulos necesarios.
 
 Debemos activar los módulos necesarios para ejecutar PHP y acceder a MySQL.
