@@ -117,6 +117,80 @@ sudo apt install php libapache2-mod-php php-mysql
 
 Debemos instalar y configurar Wordpress.
 
+Para ello, tenemos que entrar en MySQL. Ya que WordPress usa MySQL para administrar y guardar la información.
+
+Para entrar en MySQL escribimos en la terminal:
+
+```bash
+sudo mysql -u root -p
+```
+
+Y ahora, podemos crear nuestra base de datos Wordpress. Para ello, escribimos dentro de la terminal MySQL:
+
+```sql
+CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+```
+
+Ya tendremos creada nuestra base de datos para Wordpress. Ahora lo siguiente que vamos a hacer es separar las cuentas de usuarios para operar con la base de datos. El mio se llamará **wordpressnedd**, y la contraseña será **password**.
+
+```
+CREATE USER 'wordpressnedd'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
+```
+
+Ahora, vamos a instalar las extensiones PHP adicionales, que son necesarias para el buen funcionamiento de Wordpress. Para ello, escribimos en la terminal los siguientes comandos:
+
+```bash
+sudo apt update
+sudo apt install php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
+```
+
+Una vez realizado esto, reiniciamos el servicio de Apache:
+
+```bash
+sudo systemctl restart apache2
+```
+
+Por último, necesitaremos descargar Wordpress, para ello, en la terminal escribimos:
+
+```bash
+cd /tmp
+curl -O https://wordpress.org/latest.tar.gz
+```
+
+Eso nos descargará un archivo comprimido, ahora vamos a proceder a descomprimirlo:
+
+```bash
+tar xzvf latest.tar.gz
+```
+
+Ahora vamos a mover estos archivos al document root. Podemos hacerlo dentro de un `.htaccess`.
+
+```bash
+touch /tmp/wordpress/.htaccess
+```
+
+También vamos a copiar la configuración predeterminada al archivo que leerá Wordpress:
+
+```bash
+cp /tmp/wordpress/wp-config-sample.php /tmp/wordpress/wp-config.php
+```
+
+Y también podemos crear un `upgrade` directory, así Wordress no tendrá problemas sobre permisos.
+
+```bash
+mkdir /tmp/wordpress/wp-content/upgrade
+```
+
+Y ya podríamos copiar todo el contenido del directorio hacia el document root:
+
+```bash
+sudo cp -a /tmp/wordpress/. /var/www/wordpress
+```
+
+
+
+
+
 ## Activar el módulo "wsgi".
 
 Activar el módulo "wsgi" para permitir la ejecución de aplicaciones Python.
