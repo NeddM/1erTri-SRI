@@ -9,5 +9,10 @@ Debemos activar los módulos necesarios para ejecutar PHP y acceder a MySQL.
 ## Instala y configura Wordpress.
 Debemos instalar y configurar Wordpress.
 
-# Activar el módulo "wsgi".
+## Activar el módulo "wsgi".
+Activar el módulo "wsgi" para permitir la ejecución de aplicaciones Python.
+
+## Crear y desplegar una aplicación.
+Crear y desplegar una pequeña aplicación Python para comprobar que funciona correctamente.
+
 
