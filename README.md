@@ -245,9 +245,9 @@ Y lo descomprimimos:
 tar xvfz mod_wsgi-X.Y.tar.gz
 ```
 
-Ahora, vamos a configurarlo:
-```
-./configure
+Ahora, podemos configurarlo desde el archivo `configure` vamos a configurarlo:
+```bash
+nano configure
 ```
 
 ## Crear y desplegar una aplicación.
