@@ -2,7 +2,7 @@
 
 ## Instalación del servidor web Apache.
 
-Realizaremos la instalación de un servidor web Apache. Para ello, usaremos dos dominios meidante el archivo hosts: _centro.intranet_ y _departamentos.centro.intranet_. El primero servirá el contenido meidante Wordpress y el segundo una aplicación en Python.
+Realizaremos la instalación de un servidor web Apache. Para ello, usaremos dos dominios meidante el archivo hosts: _centro.intranet_ y _departamentos.centro.intranet_. El primero servirá el contenido mediante Wordpress y el segundo una aplicación en Python.
 
 Para empezar, vamos a actualizar nuestro sistema operativo Ubuntu, para ello, nos dirigimos a la terminal y escribimos:
 
@@ -202,17 +202,19 @@ sudo find /var/www/wordpress/ -type f -exec chmod 640 {} \;
 ```
 
 Ahora tenemos que hacer algunos cambios en la configuración principal de Wordpress. Para conseguir los valores seguros que genera Wordpress escribimos:
+
 ```bash
 curl -s https://api.wordpress.org/secret-key/1.1/salt/
 ```
 
 Abrimos el archivo de configuración de Wordpress:
+
 ```bash
 sudo nano /var/www/wordpress/wp-config.php
 ```
 
-
 Y dentro del archivo de configuración, metemos nuestras claves privadas:
+
 ```bash
 define('AUTH_KEY',         'm.6 Gx*h5rV)c}|t-i;}=%]rd%Fh_%65kJ GFw,9f GXwP*R*rljtx9.qzB+]`BU');
 define('SECURE_AUTH_KEY',  't+_[<%:yRZy~MLuM $M:dy2k(0^cN:<sw$97S/V<Q?cd^V(:COwT|fY+IL&=|Q[j');
@@ -224,39 +226,95 @@ define('LOGGED_IN_SALT',   '!1S1f,^*6J(AS9z;Xuzz-)K/lsOA]i1_0Ip)~%VA:IbzzivXe(_h
 define('NONCE_SALT',       '1(I}2A5kJLFg}tE<}p)(h8VPM`|q.D hM/|Do(?f(obSk~koTST- hR!oU8)-Pw_');
 ```
 
-
 ## Activar el módulo "wsgi".
 
 Activar el módulo "wsgi" para permitir la ejecución de aplicaciones Python.
 
 Lo primero que haremos será actualizar el sistema e instalar algunas librerias necesarias:
+
 ```bash
 sudo apt-get update
 sudo apt-get install apache2 apache2-utils libexpat1 ssl-cert python3
 ```
 
 Lo siguiente que haremos, será descargar el mod_wsgi:
-```
+
+```url
 https://codeload.github.com/GrahamDumpleton/mod_wsgi/tar.gz/4.9.4
 ```
 
 Y lo descomprimimos:
+
 ```bash
 tar xvfz mod_wsgi-X.Y.tar.gz
 ```
 
+También vamos a bajar la librería de wsgi para Apache:
+
+```bash
+sudo apt install libapache2-mod-wsgi-py3
+```
+
 Ahora, podemos configurarlo desde el archivo `configure` vamos a configurarlo:
+
 ```bash
 nano configure
 ```
 
+Y para activarlo en apache, nos dirigimos a nuestro virtual host, en `/etc/apache2/sites-enabled/000-default.conf`, y escribimos lo siguiente:
+
+```apache
+a2enmod wsgi
+```
+
+![Activando el módulo wsgi](/img/3.png)
+
 ## Crear y desplegar una aplicación.
 
-Crear y desplegar una pequeña aplicación Python para comprobar que funciona correctamente.
+Crearemos y desplegaremos una pequeña aplicación Python para comprobar que funciona correctamente.
+
+Para ello, vamos a instalar el repositorio _uwsgi_.
+
+```bash
+pip install uwsgi
+```
+
+Y vamos a crear un _Hola Mundo_.
+Esta aplicación es simple, es una función que; si la respuesta del servidor es 200 (Exitosa), nos devolverá un **Hola mundo**.
+
+```python
+def application(env, start_response):
+    start_response('200 OK', [('Content-Type','text/html')])
+    return [b"Hola Mundo"]
+```
+
+Y ya podremos empezar a usar nuestra aplicación:
+
+```
+uwsgi --http :9090 --wsgi-file foobar.py
+```
+
+![Ejecutando uwsgi](/img/4.png)
+
+Incluso, podríamos añadir más nucleos e hilos de procesador a nuestra aplicación:
+
+```
+uwsgi --http :9090 --wsgi-file foobar.py --master --processes 4 --threads 2
+```
 
 ## Protegemos el acceso a la aplicación Python.
 
 Adicionalmente, protegeremos el acceso a la palicación Python mediante autenticación.
+
+Esto lo haremos añadiendo varias lineas a nuestro archivo _Virtual Host_, en `/etc/apache2/sites-available/000-default.conf`:
+
+```apache
+AuthType Digest
+AuthName "Top Secret"
+AuthDigestProvider wsgi
+WSGIAuthUserScript /usr/local/wsgi/scripts/auth.wsgi
+Require valid-user
+```
 
 ## Instalar y configurar awsat.
 
