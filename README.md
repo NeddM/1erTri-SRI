@@ -316,7 +316,15 @@ WSGIAuthUserScript /usr/local/wsgi/scripts/auth.wsgi
 Require valid-user
 ```
 
-## Instalar y configurar awsat.
+## Instalar y configurar AWStat.
+
+A continuación, vamos a instalar la herramienta AWStat. Para ello, vamos a dirigirnos a la página web de AWStats, y haremos click sobre `Download`.
+
+```url
+https://awstats.sourceforge.io/
+```
+
+Cuando estemos en la sección Download, descargamos la última versión de AWStat.
 
 ## Instalar un segundo servidor.
 
