@@ -15,6 +15,45 @@ Luego, procederemos a instalar apache2:
 ```bash
 sudo apt install apache2
 ```
+Y también vamos a crear las carpetas `centro.intranet` y `departamentos.centro.intranet`.
+
+```bash
+sudo mkdir /var/www/centro.intranet
+sudo mkdir /var/www/departamentos.centro.intranet
+```
+
+Ahora, vamos a asignarle derechos al usuario, usando la variable de entorno `$USER`.
+
+```bash
+sudo chown -R $USER:$USER /var/www/centro.intranet
+sudo chown -R $USER:$USER /var/www/departamentos.centro.intranet
+```
+
+Y ahora, configuramos el VirtualHost para que funcione correctamente
+
+sudo nano /etc/apache2/sites-available/centros.intranet.conf
+
+---
+---
+---
+---
+---
+
+## Instalación del servidor web Apache.
+
+Realizaremos la instalación de un servidor web Apache. Para ello, usaremos dos dominios meidante el archivo hosts: _centro.intranet_ y _departamentos.centro.intranet_. El primero servirá el contenido mediante Wordpress y el segundo una aplicación en Python.
+
+Para empezar, vamos a actualizar nuestro sistema operativo Ubuntu, para ello, nos dirigimos a la terminal y escribimos:
+
+```bash
+sudo apt update
+```
+
+Luego, procederemos a instalar apache2:
+
+```bash
+sudo apt install apache2
+```
 
 ##### Configuramos el firewall para permitir el tráfico web
 
