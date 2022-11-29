@@ -33,7 +33,7 @@ Y ahora, configuramos cada uno de los VirtualHost para que funcione correctament
 Dentro de `centros.intranet`:
 ```apache
 <VirtualHost *:80>
-    ServerName centros.intranet
+    ServerName centro.intranet
     ServerAlias www.centro.intranet
     ServerAdmin webmaster@localhost
     DocumentRoot /var/www/centro.intranet
@@ -68,12 +68,36 @@ sudo a2dissite 000-default
 Ya estaría todo listo. Ahora podemos probar que funciona corractamente, creando un index.html en `/var/www/centro.intranet/index.html`:
 
 ```html
-<h1>centro.intranet index</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Index</h1>
+    <p>centro.intranet</p>
+</body>
+</html>
 ```
 
 Y creamos otro index en `/var/wwww/departamentos.centro.intranet/index.html`:
 ```html
-<h1>departamentos.centro.intranet index</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Index</h1>
+    <p>departamentos.centro.intranet</p>
+</body>
+</html>
 ```
 
 Y listo, ya estarían creados nuestros Virtual Hosts.
