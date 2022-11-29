@@ -29,9 +29,55 @@ sudo chown -R $USER:$USER /var/www/centro.intranet
 sudo chown -R $USER:$USER /var/www/departamentos.centro.intranet
 ```
 
-Y ahora, configuramos el VirtualHost para que funcione correctamente
+Y ahora, configuramos cada uno de los VirtualHost para que funcione correctamente.
+Dentro de `centros.intranet`:
+```apache
+<VirtualHost *:80>
+    ServerName centros.intranet
+    ServerAlias www.centro.intranet
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/centro.intranet
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost> 
+```
 
-sudo nano /etc/apache2/sites-available/centros.intranet.conf
+Y también dentro de `departamentos.centros.intranet`:
+```apache
+<VirtualHost *:80>
+    ServerName departamentos.centro.intranet
+    ServerAlias www.departamentos.centro.intranet
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/departamentos.centro.intranet
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost> 
+```
+
+A continuación, habilitaremos los nuevos VirtualHosts:
+```bash
+sudo a2ensite centro.intranet
+sudo a2ensite departamentos.centro.intranet
+```
+
+Y deshabilitamos el VirtualHost predeterminado de Apache:
+```bash
+sudo a2dissite 000-default
+```
+
+Ya estaría todo listo. Ahora podemos probar que funciona corractamente, creando un index.html en `/var/www/centro.intranet/index.html`:
+
+```html
+<h1>centro.intranet index</h1>
+```
+
+Y creamos otro index en `/var/wwww/departamentos.centro.intranet/index.html`:
+```html
+<h1>departamentos.centro.intranet index</h1>
+```
+
+Y listo, ya estarían creados nuestros Virtual Hosts.
+
 
 ---
 ---
