@@ -1,7 +1,5 @@
 # Proyecto 1er trimestre SRI.
 
-
-
 ## Instalación del servidor web Apache.
 
 Realizaremos la instalación de un servidor web Apache. Para ello, usaremos dos dominios meidante el archivo hosts: _centro.intranet_ y _departamentos.centro.intranet_. El primero servirá el contenido mediante Wordpress y el segundo una aplicación en Python.
@@ -83,6 +81,7 @@ sudo chown -R $USER:$USER /var/www/departamentos.centro.intranet
 
 Y ahora, configuramos cada uno de los VirtualHost para que funcione correctamente.
 Dentro de `centros.intranet`:
+
 ```apache
 <VirtualHost *:80>
     ServerName centro.intranet
@@ -91,10 +90,11 @@ Dentro de `centros.intranet`:
     DocumentRoot /var/www/centro.intranet
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost> 
+</VirtualHost>
 ```
 
 Y también dentro de `departamentos.centros.intranet`:
+
 ```apache
 <VirtualHost *:80>
     ServerName departamentos.centro.intranet
@@ -103,16 +103,18 @@ Y también dentro de `departamentos.centros.intranet`:
     DocumentRoot /var/www/departamentos.centro.intranet
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost> 
+</VirtualHost>
 ```
 
 A continuación, habilitaremos los nuevos VirtualHosts:
+
 ```bash
 sudo a2ensite centro.intranet
 sudo a2ensite departamentos.centro.intranet
 ```
 
 Y deshabilitamos el VirtualHost predeterminado de Apache:
+
 ```bash
 sudo a2dissite 000-default
 ```
@@ -122,38 +124,38 @@ Ya estaría todo listo. Ahora podemos probar que funciona corractamente, creando
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Index</h1>
-    <p>centro.intranet</p>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Index</h1>
+        <p>centro.intranet</p>
+    </body>
 </html>
 ```
 
 Y creamos otro index en `/var/wwww/departamentos.centro.intranet/index.html`:
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Index</h1>
-    <p>departamentos.centro.intranet</p>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Index</h1>
+        <p>departamentos.centro.intranet</p>
+    </body>
 </html>
 ```
 
 Y listo, ya estarían creados nuestros Virtual Hosts.
-
 
 ## Activar los módulos necesarios.
 
@@ -456,6 +458,8 @@ http://127.0.0.1/cgi-bin/awstats.pl?config=centro.intranet
 
 ## Instalar un segundo servidor.
 
+https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04-es
+
 Vamos a instalar un segundo servidor, por ejemplo, _nginx_ o _lightpd_, bajo el dominio "servidor2.centro.Intranet". Debes configurarlo para que sirva en el puerto 8080 y haz los cambios necesarios para ejecutar PHP. Instala Phpmyadmin.
 
 Para empezar, tenemos que actualizar nuestro sistema Ubuntu, y también vamos a instalar _nginx_:
@@ -476,3 +480,78 @@ Y comprobaremos que todo va correctamente:
 ```bash
 systemctl status nginx
 ```
+
+Ahora, vamos a configurar los DNS. Para ello, vamos a crear la siguiente carpeta:
+
+```bash
+sudo mkdir -p /var/www/servidor2.centro.intranet/html
+```
+
+Y le asignaremos la propiedad del directorio:
+
+```bash
+sudo chown -R $USER:$USER /var/www/servidor2.centro.intranet/html
+sudo chmod -R 755 /var/www/servidor2.centro.intranet
+```
+
+Creamos un index para nuestra web...
+
+```bash
+nano /var/www/servidor2.centro.intranet/html/index.html
+```
+
+Y tambien crearemos la directiva en el servidor:
+
+```bash
+sudo nano /etc/nginx/sites-available/servidor2.centro.intranet
+```
+
+Dentro escribimos:
+
+```nginx
+server {
+        listen 8080;
+        listen [::]:8080;
+
+        root /var/www/servidor2.centro.intranet/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name servidor2.centro.intranet www.servidor2.centro.intranet;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+```
+
+También tenemos que crear un `sites-enabled`.
+
+```bash
+sudo ln -s /etc/nginx/sites-available/servidor2.centro.intranet /etc/nginx/sites-enabled/
+```
+
+Por último, tenemos que descomentar una linea en el archivo de configuración de `nginx.conf`.
+
+```
+...
+http {
+    ...
+    server_names_hash_bucket_size 64;
+    ...
+}
+...
+```
+
+Vamos a probar que no hayan errores de sintaxis:
+
+```bash
+sudo nginx -t
+```
+
+Y si no hay fallo, vamos reiniciar el servicio de nginx:
+
+```bash
+sudo systemctl restart nginx
+```
+
+¡Y ya tenemos listo nuestro servidor **NGINX**!
