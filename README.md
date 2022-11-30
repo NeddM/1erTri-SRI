@@ -1,5 +1,7 @@
 # Proyecto 1er trimestre SRI.
 
+
+
 ## Instalación del servidor web Apache.
 
 Realizaremos la instalación de un servidor web Apache. Para ello, usaremos dos dominios meidante el archivo hosts: _centro.intranet_ y _departamentos.centro.intranet_. El primero servirá el contenido mediante Wordpress y el segundo una aplicación en Python.
@@ -64,6 +66,94 @@ http://127.0.0.1
 ```
 
 ![Apache2, índice por defecto.](/img/1.png)
+
+Y también vamos a crear las carpetas `centro.intranet` y `departamentos.centro.intranet`.
+
+```bash
+sudo mkdir /var/www/centro.intranet
+sudo mkdir /var/www/departamentos.centro.intranet
+```
+
+Ahora, vamos a asignarle derechos al usuario, usando la variable de entorno `$USER`.
+
+```bash
+sudo chown -R $USER:$USER /var/www/centro.intranet
+sudo chown -R $USER:$USER /var/www/departamentos.centro.intranet
+```
+
+Y ahora, configuramos cada uno de los VirtualHost para que funcione correctamente.
+Dentro de `centros.intranet`:
+```apache
+<VirtualHost *:80>
+    ServerName centro.intranet
+    ServerAlias www.centro.intranet
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/centro.intranet
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost> 
+```
+
+Y también dentro de `departamentos.centros.intranet`:
+```apache
+<VirtualHost *:80>
+    ServerName departamentos.centro.intranet
+    ServerAlias www.departamentos.centro.intranet
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/departamentos.centro.intranet
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost> 
+```
+
+A continuación, habilitaremos los nuevos VirtualHosts:
+```bash
+sudo a2ensite centro.intranet
+sudo a2ensite departamentos.centro.intranet
+```
+
+Y deshabilitamos el VirtualHost predeterminado de Apache:
+```bash
+sudo a2dissite 000-default
+```
+
+Ya estaría todo listo. Ahora podemos probar que funciona corractamente, creando un index.html en `/var/www/centro.intranet/index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Index</h1>
+    <p>centro.intranet</p>
+</body>
+</html>
+```
+
+Y creamos otro index en `/var/wwww/departamentos.centro.intranet/index.html`:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Index</h1>
+    <p>departamentos.centro.intranet</p>
+</body>
+</html>
+```
+
+Y listo, ya estarían creados nuestros Virtual Hosts.
+
 
 ## Activar los módulos necesarios.
 
@@ -316,53 +406,7 @@ WSGIAuthUserScript /usr/local/wsgi/scripts/auth.wsgi
 Require valid-user
 ```
 
-## Instalar y configurar AWStats.
-
-Habilitamos el módulo CGI en Apache.
-
-```bash
-sudo a2enmod cgi
-sudo /etc/init.d/apache2 restart
-```
-
-A continuación, abriremos el archivo de configuración de AWStats, para cambiar algunas cosas.
-Copiamos la plantilla de configuración predefinida, con el siguiente comando:
-
-```bash
-sudo cp /etc/awstats/awstats.conf /etc/awstats/awstats.centro.intranet.conf
-```
-
-Y lo abrimos con un editor de texto...
-
-Vamos a modificar la siguiente informacion.
-
-```
-LogFile=”/var/log/apache2/access.log”  (buscar y verificar que queda así)
-SiteDomain=”centro.intranet”
-HostAliases=”centro.intranet localhost 127.0.0.1”
-AllowToUpdateStatsFromBrowser=1
-```
-
-Despues de realizar los cambios mencionados anteriormente, introducimos el siguiente comando en la consola de Linux:
-
-```bash
-sudo /usr/lib/cgi-bin/awstats.pl -config=centro.intranet -update
-```
-
-Y para terminar nuestra configuración, ejecutaremos los siguientes comandos:
-
-```bash
-sudo cp -r /usr/lib/cgi-bin /var/www/html/
-sudo chown -R www-dat
-www-data /var/www/html/cgi-bin/
-sudo chmod -R 755 /var/www/html/cgi-bin/
-```
-
-Ya estaría todo listo, vamos a escribir lo siguiente en el navegador:
-
-```url
-http://127.0.0.1/cgi-bin/awstats.pl?config=centro.intranet
-```
+## Instalar y configurar awsat.
 
 ## Instalar un segundo servidor.
 
