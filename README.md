@@ -1,4 +1,3 @@
-# Proyecto 1er trimestre SRI.
 
 # Práctica Servidores Web, 1º trimestre SRI.
 
